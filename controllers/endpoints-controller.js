@@ -1,6 +1,8 @@
-const { selectEndpoints } = require("../models/endpoints-model");
+const endpoints = require("../endpoints.json");
 
 exports.getEndpoints = (req, res, next) => {
-  const endpoints = selectEndpoints();
-  res.status(200).send({ endpoints });
+  res
+    .status(200)
+    .send({ endpoints })
+    .catch((err) => next(err));
 };
