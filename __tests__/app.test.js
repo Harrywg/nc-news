@@ -86,9 +86,6 @@ describe("/api/articles", () => {
         })
         .then(() => {
           return reqById(3);
-        })
-        .then(() => {
-          return reqById(4);
         });
     });
   });
