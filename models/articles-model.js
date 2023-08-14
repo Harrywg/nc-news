@@ -1,13 +1,13 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (id) => {
-  return db
-    .query(
-      `SELECT * FROM articles 
-      WHERE article_id = $1`,
-      [id]
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+exports.selectArticles = (params) => {
+  let query = `SELECT * FROM articles`;
+
+  //if selectById
+  if (params.article_id) query += ` WHERE article_id = ${params.article_id}`;
+  query += ";";
+
+  return db.query(query).then(({ rows }) => {
+    return rows;
+  });
 };
