@@ -28,9 +28,9 @@ describe("/api", () => {
   });
 });
 
-describe("/api/treasures", () => {
+describe("/api/topics", () => {
   describe("GET", () => {
-    test("200 when request all treasures", () => {
+    test("200 when request all topics", () => {
       return request(app).get("/api/topics").expect(200);
     });
     test("200 + return correct data from topics", () => {
@@ -50,7 +50,7 @@ describe("/api/treasures", () => {
 });
 
 describe("/api/articles", () => {
-  describe("GET by id", () => {
+  describe.only("GET by id", () => {
     test("200 when request article by valid id", () => {
       return request(app).get("/api/articles/1").expect(200);
     });
@@ -70,13 +70,22 @@ describe("/api/articles", () => {
           expect(article).toHaveProperty("article_img_url");
         });
     });
-    test("200 + returns single article", () => {
-      return request(app)
-        .get("/api/articles/1")
-        .expect(200)
-        .then(({ body }) => {
-          const articles = body.article;
-          expect(articles.length).toBe(1);
+    test("200 + returns article object with correct id for multiple ids", () => {
+      const reqById = (id) => {
+        return request(app)
+          .get(`/api/articles/${id}`)
+          .expect(200)
+          .then(({ body }) => {
+            const article = body.article[0];
+            expect(article.article_id).toBe(id);
+          });
+      };
+      return reqById(1)
+        .then(() => {
+          return reqById(2);
+        })
+        .then(() => {
+          return reqById(3);
         });
     });
   });

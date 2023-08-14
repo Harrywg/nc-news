@@ -8,9 +8,9 @@ const {
   articlesController,
 } = require("./controllers/");
 
-app.get("/api/topics", topicsController.getTopics);
-
 app.get("/api", endpointsController.getEndpoints);
+
+app.get("/api/topics", topicsController.getTopics);
 
 app.get("/api/articles/:article_id", articlesController.getArticlesById);
 
