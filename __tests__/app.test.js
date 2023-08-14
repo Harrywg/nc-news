@@ -33,8 +33,6 @@ describe("/api/treasures", () => {
     test("200 when request all treasures", () => {
       return request(app).get("/api/topics").expect(200);
     });
-  });
-  describe("GET", () => {
     test("200 + return correct data from topics", () => {
       return request(app)
         .get("/api/topics")
@@ -46,6 +44,39 @@ describe("/api/treasures", () => {
             { slug: "paper", description: "what books are made of" },
           ];
           expect(body.topics).toEqual(expectedOut);
+        });
+    });
+  });
+});
+
+describe("/api/articles", () => {
+  describe("GET by id", () => {
+    test("200 when request article by valid id", () => {
+      return request(app).get("/api/articles/1").expect(200);
+    });
+    test("200 + returns correct article object with correct properties", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const article = body.article[0];
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("body");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+        });
+    });
+    test("200 + returns single article", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.article;
+          expect(articles.length).toBe(1);
         });
     });
   });
