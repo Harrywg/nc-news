@@ -1,2 +1,4 @@
 const topicsController = require("./topics-controller");
-module.exports = { topicsController };
+const endpointsController = require("./endpoints-controller");
+
+module.exports = { topicsController, endpointsController };

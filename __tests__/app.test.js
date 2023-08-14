@@ -12,6 +12,22 @@ const {
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
 
+describe("/api", () => {
+  describe("GET", () => {
+    test("200 when request all endpoints", () => {
+      return request(app).get("/api").expect(200);
+    });
+    test("200 + returns endpoints when request all endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.endpoints).toEqual(require("../endpoints.json"));
+        });
+    });
+  });
+});
+
 describe("/api/treasures", () => {
   describe("GET", () => {
     test("200 when request all treasures", () => {
