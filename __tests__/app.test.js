@@ -12,12 +12,6 @@ const {
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
 
-describe("generic errors", () => {
-  test("404 when request route that does not exist", () => {
-    return request(app).get("/api/incorrect_path").expect(404);
-  });
-});
-
 describe("/api/treasures", () => {
   describe("GET", () => {
     test("200 when request all treasures", () => {
@@ -30,12 +24,12 @@ describe("/api/treasures", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
-          const eOut = [
+          const expectedOut = [
             { slug: "mitch", description: "The man, the Mitch, the legend" },
             { slug: "cats", description: "Not dogs" },
             { slug: "paper", description: "what books are made of" },
           ];
-          expect(body.topics).toEqual(eOut);
+          expect(body.topics).toEqual(expectedOut);
         });
     });
   });

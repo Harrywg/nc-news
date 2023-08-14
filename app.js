@@ -4,8 +4,6 @@ const app = express();
 const { errorHandler } = require("./error-handler");
 const { topicsController } = require("./controllers/");
 
-app.use(express.json());
-
 app.get("/api/topics", topicsController.getTopics);
 
 app.use(errorHandler);
