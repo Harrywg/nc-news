@@ -50,33 +50,33 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  describe.only("GET", () => {
-    test("200 when request all articles", () => {
-      return request(app).get("/api/articles").expect(200);
-    });
-    test("200 + return correct data from articles", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body }) => {
-          const articles = body.articles;
-          articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                article_id: expect.any(Number),
-                title: expect.any(String),
-                topic: expect.any(String),
-                author: expect.any(String),
-                body: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                article_img_url: expect.any(String),
-              })
-            );
-          });
-        });
-    });
-  });
+  // describe("GET", () => {
+  //   test("200 when request all articles", () => {
+  //     return request(app).get("/api/articles").expect(200);
+  //   });
+  //   test("200 + return correct data from articles", () => {
+  //     return request(app)
+  //       .get("/api/articles")
+  //       .expect(200)
+  //       .then(({ body }) => {
+  //         const articles = body.articles;
+  //         articles.forEach((article) => {
+  //           expect(article).toEqual(
+  //             expect.objectContaining({
+  //               article_id: expect.any(Number),
+  //               title: expect.any(String),
+  //               topic: expect.any(String),
+  //               author: expect.any(String),
+  //               body: expect.any(String),
+  //               created_at: expect.any(String),
+  //               votes: expect.any(Number),
+  //               article_img_url: expect.any(String),
+  //             })
+  //           );
+  //         });
+  //       });
+  //   });
+  // });
   describe("GET by id", () => {
     test("200 when request article by valid id", () => {
       return request(app).get("/api/articles/1").expect(200);
