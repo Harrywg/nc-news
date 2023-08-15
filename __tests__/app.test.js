@@ -51,13 +51,14 @@ describe("/api/topics", () => {
 
 describe("/api/articles", () => {
   describe("GET", () => {
-    test("200 + returns all articles with correct properties and values", () => {
+    test("200 + returns all articles with correct properties and values, sorted by created_at", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
           const articles = body.articles;
           expect(articles.length).toBe(13);
+          expect(articles).toBeSortedBy("created_at", { descending: true });
           articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
@@ -72,34 +73,6 @@ describe("/api/articles", () => {
               })
             );
           });
-        });
-    });
-    test("200 + returns all articles sorted by created_at", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body }) => {
-          const articles = body.articles;
-
-          //convert date format to seconds
-          const seconds = articles.map((article) => {
-            //use regex to split date format to Y M D h m s
-            const splitTimes = article.created_at.split(/[-T:]/);
-            const thisDate = new Date(
-              Date.UTC(
-                splitTimes[0],
-                splitTimes[1],
-                splitTimes[2],
-                splitTimes[3],
-                splitTimes[4]
-              )
-            );
-
-            //invoke Date constructors getTime method, returns seconds
-            return thisDate.getTime();
-          });
-
-          expect(seconds).toBeSorted({ descending: true });
         });
     });
   });
