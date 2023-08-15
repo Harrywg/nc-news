@@ -9,3 +9,14 @@ exports.selectCommentsByArticleId = (params) => {
     return rows;
   });
 };
+
+exports.insertCommentsByArticleId = (params) => {
+  // pass this a comment object in test
+  // ensure that obj can be passed into sql
+  // INSERT INTO statement
+  // Successful respnose will include username and body properties
+  // -- author is the username
+  return db.query(query).then(({ rows }) => {
+    return rows;
+  });
+};

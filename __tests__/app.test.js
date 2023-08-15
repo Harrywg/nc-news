@@ -124,4 +124,15 @@ describe("/api/articles", () => {
         });
     });
   });
+
+  describe.only("POST comments by article id", () => {
+    test("200", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((response) => {
+          console.log(response);
+        });
+    });
+  });
 });
