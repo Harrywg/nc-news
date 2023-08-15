@@ -108,6 +108,7 @@ describe("/api/articles", () => {
         .expect(200)
         .then(({ body }) => {
           const comments = body.comments;
+          expect(comments).toBeSortedBy("created_at", { descending: true });
           comments.forEach((comment) => {
             expect(comment).toEqual(
               expect.objectContaining({

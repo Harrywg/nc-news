@@ -1,10 +1,9 @@
 const { selectCommentsByArticleId } = require("../models/comments-model");
 
 exports.getCommentsByArticleId = (req, res, next) => {
-  console.log("in controller");
-  selectCommentsByArticleId()
+  selectCommentsByArticleId(req.params)
     .then((comments) => {
-      res.status(200).send(comments);
+      res.status(200).send({ comments });
     })
     .catch((err) => next(err));
 };
