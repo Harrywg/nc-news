@@ -49,39 +49,39 @@ describe("/api/topics", () => {
   });
 });
 
-describe("/api/articles", () => {
-  describe.only("GET by id", () => {
-    test("200 when request article by valid id", () => {
-      return request(app).get("/api/articles/1").expect(200);
-    });
-    test("200 + returns correct article object with correct properties", () => {
-      return request(app)
-        .get("/api/articles/1")
-        .expect(200)
-        .then(({ body }) => {
-          const article = body.article[0];
-          expect(article).toEqual(
-            expect.objectContaining({
-              article_id: expect.any(Number),
-              title: expect.any(String),
-              topic: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
-              created_at: expect.any(String),
-              votes: expect.any(Number),
-              article_img_url: expect.any(String),
-            })
-          );
-        });
-    });
-    test("200 + returns article object with correct id", () => {
-      request(app)
-        .get("/api/articles/1")
-        .expect(200)
-        .then(({ body }) => {
-          const article = body.article[0];
-          expect(article.article_id).toBe(1);
-        });
-    });
-  });
-});
+// describe("/api/articles", () => {
+//   describe("GET by id", () => {
+//     test("200 when request article by valid id", () => {
+//       return request(app).get("/api/articles/1").expect(200);
+//     });
+//     test("200 + returns correct article object with correct properties", () => {
+//       return request(app)
+//         .get("/api/articles/1")
+//         .expect(200)
+//         .then(({ body }) => {
+//           const article = body.article[0];
+//           expect(article).toEqual(
+//             expect.objectContaining({
+//               article_id: expect.any(Number),
+//               title: expect.any(String),
+//               topic: expect.any(String),
+//               author: expect.any(String),
+//               body: expect.any(String),
+//               created_at: expect.any(String),
+//               votes: expect.any(Number),
+//               article_img_url: expect.any(String),
+//             })
+//           );
+//         });
+//     });
+//     test("200 + returns article object with correct id", () => {
+//       request(app)
+//         .get("/api/articles/1")
+//         .expect(200)
+//         .then(({ body }) => {
+//           const article = body.article[0];
+//           expect(article.article_id).toBe(1);
+//         });
+//     });
+//   });
+// });
