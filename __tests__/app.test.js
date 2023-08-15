@@ -51,10 +51,7 @@ describe("/api/topics", () => {
 
 describe("/api/articles", () => {
   describe("GET", () => {
-    test("200 when request all articles", () => {
-      return request(app).get("/api/articles").expect(200);
-    });
-    test("200 + return correct data from articles", () => {
+    test("200 + returns all articles", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -77,16 +74,16 @@ describe("/api/articles", () => {
         });
     });
   });
+
   describe("GET by id", () => {
-    test("200 when request article by valid id", () => {
-      return request(app).get("/api/articles/1").expect(200);
-    });
     test("200 + returns correct article object with correct properties", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
         .then(({ body }) => {
+          expect(body.article.length).toBe(1);
           const article = body.article[0];
+          expect(article.article_id).toBe(1);
           expect(article).toEqual(
             expect.objectContaining({
               article_id: expect.any(Number),
