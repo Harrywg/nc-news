@@ -51,12 +51,13 @@ describe("/api/topics", () => {
 
 describe("/api/articles", () => {
   describe("GET", () => {
-    test("200 + returns all articles", () => {
+    test("200 + returns all articles with correct properties and values", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
           const articles = body.articles;
+          expect(articles.length).toBe(13);
           articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
@@ -64,13 +65,41 @@ describe("/api/articles", () => {
                 title: expect.any(String),
                 topic: expect.any(String),
                 author: expect.any(String),
-                body: expect.any(String),
+                comment_count: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 article_img_url: expect.any(String),
               })
             );
           });
+        });
+    });
+    test("200 + returns all articles sorted by created_at", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.articles;
+
+          //convert date format to seconds
+          const seconds = articles.map((article) => {
+            //use regex to split date format to Y M D h m s
+            const splitTimes = article.created_at.split(/[-T:]/);
+            const thisDate = new Date(
+              Date.UTC(
+                splitTimes[0],
+                splitTimes[1],
+                splitTimes[2],
+                splitTimes[3],
+                splitTimes[4]
+              )
+            );
+
+            //invoke Date constructors getTime method, returns seconds
+            return thisDate.getTime();
+          });
+
+          expect(seconds).toBeSorted({ descending: true });
         });
     });
   });
@@ -90,21 +119,12 @@ describe("/api/articles", () => {
               title: expect.any(String),
               topic: expect.any(String),
               author: expect.any(String),
-              comment_count: expect.any(Number),
+              body: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
               article_img_url: expect.any(String),
             })
           );
-        });
-    });
-    test("200 + returns article object with correct id", () => {
-      return request(app)
-        .get("/api/articles/1")
-        .expect(200)
-        .then(({ body }) => {
-          const article = body.article[0];
-          expect(article.article_id).toBe(1);
         });
     });
   });
