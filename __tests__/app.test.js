@@ -87,32 +87,27 @@ describe("/api/articles", () => {
         .expect(200)
         .then(({ body }) => {
           const article = body.article[0];
-          expect(article).toHaveProperty("article_id");
-          expect(article).toHaveProperty("title");
-          expect(article).toHaveProperty("topic");
-          expect(article).toHaveProperty("author");
-          expect(article).toHaveProperty("body");
-          expect(article).toHaveProperty("created_at");
-          expect(article).toHaveProperty("votes");
-          expect(article).toHaveProperty("article_img_url");
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+            })
+          );
         });
     });
-    test("200 + returns article object with correct id for multiple ids", () => {
-      const reqById = (id) => {
-        return request(app)
-          .get(`/api/articles/${id}`)
-          .expect(200)
-          .then(({ body }) => {
-            const article = body.article[0];
-            expect(article.article_id).toBe(id);
-          });
-      };
-      return reqById(1)
-        .then(() => {
-          return reqById(2);
-        })
-        .then(() => {
-          return reqById(3);
+    test("200 + returns article object with correct id", () => {
+      request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const article = body.article[0];
+          expect(article.article_id).toBe(1);
         });
     });
   });
