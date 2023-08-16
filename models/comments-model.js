@@ -2,6 +2,9 @@ const format = require("pg-format");
 const db = require("../db/connection");
 exports.selectCommentsByArticleId = (params) => {
   const id = params.article_id;
+  if (isNaN(id)) {
+    return Promise.reject({ msg: "Bad Request", code: 400, custom: true });
+  }
 
   let query = `
   SELECT * FROM comments WHERE article_id = $1
