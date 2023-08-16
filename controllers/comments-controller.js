@@ -12,9 +12,9 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentByArticleId = (req, res, next) => {
-  insertCommentsByArticleId(req.params)
-    .then((result) => {
-      res.status(200).send({ result });
+  insertCommentsByArticleId(req.body, req.params)
+    .then(() => {
+      res.status(201).send();
     })
     .catch((err) => next(err));
 };

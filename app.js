@@ -8,6 +8,9 @@ const {
   articlesController,
   commentsController,
 } = require("./controllers/");
+
+app.use(express.json());
+
 app.get("/api", endpointsController.getEndpoints);
 
 app.get("/api/topics", topicsController.getTopics);

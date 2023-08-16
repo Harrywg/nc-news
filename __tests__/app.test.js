@@ -126,13 +126,15 @@ describe("/api/articles", () => {
   });
 
   describe.only("POST comments by article id", () => {
-    test("200", () => {
+    test("201", () => {
       return request(app)
-        .get("/api/articles/1/comments")
-        .expect(200)
-        .then((response) => {
-          console.log(response);
-        });
+        .post("/api/articles/1/comments")
+        .send({
+          username: "lurker",
+          body: "hello",
+        })
+        .expect(201)
+        .then((response) => {});
     });
   });
 });

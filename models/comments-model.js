@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("../db/connection");
 exports.selectCommentsByArticleId = (params) => {
   const id = params.article_id;
@@ -10,13 +11,23 @@ exports.selectCommentsByArticleId = (params) => {
   });
 };
 
-exports.insertCommentsByArticleId = (params) => {
-  // pass this a comment object in test
-  // ensure that obj can be passed into sql
-  // INSERT INTO statement
-  // Successful respnose will include username and body properties
-  // -- author is the username
-  return db.query(query).then(({ rows }) => {
+exports.insertCommentsByArticleId = (reqBody, params) => {
+  const created_at = new Date(Date.now());
+  const author = reqBody.username;
+  const body = reqBody.body;
+  const article_id = params.article_id;
+
+  const values = [[created_at, author, body, article_id]];
+
+  let query = `
+  INSERT INTO comments (created_at, author, body, article_id)
+  VALUES %L;
+  `;
+
+  const formattedQuery = format(query, values);
+  console.log(formattedQuery);
+
+  return db.query(formattedQuery).then(({ rows }) => {
     return rows;
   });
 };
