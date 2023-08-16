@@ -141,7 +141,14 @@ describe("/api/articles", () => {
           expect(body).toEqual({ msg: "Not Found" });
         });
     });
-    test("400 + return msg when passed invalid id", () => {});
+    test("400 + return msg when passed invalid id", () => {
+      return request(app)
+        .get("/api/articles/banana/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Bad Request" });
+        });
+    });
   });
 
   describe("POST comments by article id", () => {
