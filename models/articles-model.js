@@ -33,3 +33,13 @@ exports.selectArticles = () => {
     return rows;
   });
 };
+
+exports.updateVotes = (body) => {
+  const votesToAdd = body.inc_votes;
+  let query = `
+  UPDATE articles
+  SET votes = votes + $1;
+  `;
+
+  return db.query(query, [votesToAdd]);
+};

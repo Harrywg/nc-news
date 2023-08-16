@@ -153,13 +153,17 @@ describe("/api/articles", () => {
 
   describe("POST comments by article id", () => {
     test("201 when passed valid comment to valid article id", () => {
+      const comment = {
+        username: "lurker",
+        body: "hello",
+      };
       return request(app)
         .post("/api/articles/1/comments")
-        .send({
-          username: "lurker",
-          body: "hello",
-        })
-        .expect(201);
+        .send(comment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(comment);
+        });
     });
     test("404 + return msg when passed article id that doesn't exist", () => {
       return request(app)

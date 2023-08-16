@@ -13,8 +13,8 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
 exports.postCommentByArticleId = (req, res, next) => {
   insertCommentsByArticleId(req.body, req.params)
-    .then(() => {
-      res.status(201).send();
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch((err) => next(err));
 };

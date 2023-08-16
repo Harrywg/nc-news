@@ -24,32 +24,29 @@ exports.selectCommentsByArticleId = (params) => {
 };
 
 exports.insertCommentsByArticleId = (reqBody, params) => {
-  const created_at = new Date(Date.now());
   const author = reqBody.username;
   const body = reqBody.body;
   const article_id = params.article_id;
-
   if (!author || !body) {
     return Promise.reject({ msg: "Bad Request", code: 400, custom: true });
   }
 
-  const values = [[created_at, author, body, article_id]];
+  const values = [[author, body, article_id]];
 
   let query = `
-  INSERT INTO comments (created_at, author, body, article_id)
+  INSERT INTO comments (author, body, article_id)
   VALUES %L;
   `;
 
   const formattedQuery = format(query, values);
 
   const checkQuery = `SELECT * FROM articles WHERE article_id = $1;`;
-
   return db.query(checkQuery, [article_id]).then(({ rows }) => {
     if (rows.length === 0) {
       return Promise.reject({ msg: "Not Found", code: 404, custom: true });
     }
-    return db.query(formattedQuery).then(({ rows }) => {
-      return rows;
+    return db.query(formattedQuery).then(() => {
+      return reqBody;
     });
   });
 };
