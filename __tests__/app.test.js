@@ -101,7 +101,7 @@ describe("/api/articles", () => {
         });
     });
   });
-  describe.only("GET article comments by id", () => {
+  describe("GET article comments by id", () => {
     test("200 + returns array of comments with correct properties and values", () => {
       return request(app)
         .get("/api/articles/1/comments")
@@ -144,7 +144,7 @@ describe("/api/articles", () => {
     test("400 + return msg when passed invalid id", () => {});
   });
 
-  describe.only("POST comments by article id", () => {
+  describe("POST comments by article id", () => {
     test("201 when passed valid comment to valid article id", () => {
       return request(app)
         .post("/api/articles/1/comments")
