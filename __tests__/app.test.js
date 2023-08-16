@@ -101,7 +101,7 @@ describe("/api/articles", () => {
         });
     });
   });
-  describe("GET article comments by id", () => {
+  describe.only("GET article comments by id", () => {
     test("200 + returns array of comments with correct properties and values", () => {
       return request(app)
         .get("/api/articles/1/comments")
@@ -109,6 +109,7 @@ describe("/api/articles", () => {
         .then(({ body }) => {
           const comments = body.comments;
           expect(comments).toBeSortedBy("created_at", { descending: true });
+          expect(comments.length).toBeGreaterThan(0);
           comments.forEach((comment) => {
             expect(comment).toEqual(
               expect.objectContaining({
@@ -123,5 +124,23 @@ describe("/api/articles", () => {
           });
         });
     });
+    test("200 + return no comments when article has no comments", () => {
+      return request(app)
+        .get("/api/articles/4/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const comments = body.comments;
+          expect(comments).toHaveLength(0);
+        });
+    });
+    test("404 + return msg when article isn't found", () => {
+      return request(app)
+        .get("/api/articles/9999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toEqual({ msg: "Not Found" });
+        });
+    });
+    test("400 + return msg when passed invalid id", () => {});
   });
 });
