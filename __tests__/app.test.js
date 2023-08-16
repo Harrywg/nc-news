@@ -126,15 +126,49 @@ describe("/api/articles", () => {
   });
 
   describe.only("POST comments by article id", () => {
-    test("201", () => {
+    test("201 when passed valid comment to valid article id", () => {
       return request(app)
         .post("/api/articles/1/comments")
         .send({
           username: "lurker",
           body: "hello",
         })
-        .expect(201)
-        .then((response) => {});
+        .expect(201);
+    });
+    test("404 + return msg when passed article id that doesn't exist", () => {
+      return request(app)
+        .post("/api/articles/99999/comments")
+        .send({
+          username: "lurker",
+          body: "hello",
+        })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("400 + return msg when passed invalid article id", () => {
+      return request(app)
+        .post("/api/articles/banana/comments")
+        .send({
+          username: "lurker",
+          body: "hello",
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("400 + return msg when passed incompatible body", () => {
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send({
+          invalid: true,
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
     });
   });
 });
