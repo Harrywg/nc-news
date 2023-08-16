@@ -29,10 +29,6 @@ exports.insertCommentsByArticleId = (reqBody, params) => {
   const body = reqBody.body;
   const article_id = params.article_id;
 
-  if (isNaN(article_id)) {
-    return Promise.reject({ msg: "Bad Request", code: 400, custom: true });
-  }
-
   if (!author || !body) {
     return Promise.reject({ msg: "Bad Request", code: 400, custom: true });
   }
@@ -52,7 +48,6 @@ exports.insertCommentsByArticleId = (reqBody, params) => {
     if (rows.length === 0) {
       return Promise.reject({ msg: "Not Found", code: 404, custom: true });
     }
-    console.log("query okay");
     return db.query(formattedQuery).then(({ rows }) => {
       return rows;
     });
