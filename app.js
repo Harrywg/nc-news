@@ -7,6 +7,7 @@ const {
   endpointsController,
   articlesController,
   commentsController,
+  usersController,
 } = require("./controllers/");
 
 app.use(express.json());
@@ -31,6 +32,7 @@ app.post(
   commentsController.postCommentByArticleId
 );
 
+app.get("/api/users", usersController.getUsers);
 app.use(errorHandler);
 
 module.exports = app;
