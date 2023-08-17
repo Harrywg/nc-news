@@ -34,12 +34,30 @@ exports.selectArticles = () => {
   });
 };
 
-exports.updateVotes = (body) => {
+exports.updateVotes = (body, params) => {
+  const id = params.article_id;
   const votesToAdd = body.inc_votes;
   let query = `
-  UPDATE articles
-  SET votes = votes + $1;
+  UPDATE articles 
+  SET votes = votes + $2
+  WHERE article_id = $1;
   `;
 
-  return db.query(query, [votesToAdd]);
+  const getArticle = () => {
+    //generic get article query
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]);
+  };
+
+  return getArticle().then(({ rows }) => {
+    //check before UPDATE
+    if (rows.length === 0)
+      return Promise.reject({ code: 404, msg: "Not Found", custom: true });
+
+    return db.query(query, [id, votesToAdd]).then(() => {
+      //check after UPDATE
+      return getArticle().then(({ rows }) => {
+        return rows;
+      });
+    });
+  });
 };

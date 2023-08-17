@@ -201,4 +201,47 @@ describe("/api/articles", () => {
         });
     });
   });
+
+  describe("PATCH article votes by article id", () => {
+    test("returns 201 with updated article when valid id and valid body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: 5 })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article.length).toBe(1);
+          const article = body.article[0];
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: 105,
+              article_img_url: expect.any(String),
+            })
+          );
+        });
+    });
+    test("returns 400 when given invalid body", () => {
+      return request(app)
+        .patch("/api/articles/3")
+        .send({ votes: 3 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("returns 404 given article id that doesn't exist", () => {
+      return request(app)
+        .patch("/api/articles/99999")
+        .send({ inc_votes: 3 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+  });
 });

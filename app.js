@@ -30,6 +30,7 @@ app.post(
   "/api/articles/:article_id/comments",
   commentsController.postCommentByArticleId
 );
+
 app.use(errorHandler);
 
 module.exports = app;
