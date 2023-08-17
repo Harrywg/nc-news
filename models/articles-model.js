@@ -44,17 +44,14 @@ exports.updateVotes = (body, params) => {
   `;
 
   const getArticle = () => {
-    //generic get article query
     return db.query(`SELECT * FROM articles WHERE article_id = $1`, [id]);
   };
 
   return getArticle().then(({ rows }) => {
-    //check before UPDATE
     if (rows.length === 0)
       return Promise.reject({ code: 404, msg: "Not Found", custom: true });
 
     return db.query(query, [id, votesToAdd]).then(() => {
-      //check after UPDATE
       return getArticle().then(({ rows }) => {
         return rows;
       });
