@@ -3,10 +3,6 @@ const db = require("../db/connection");
 exports.selectArticlesById = (params) => {
   const id = params.article_id;
 
-  if (isNaN(+id)) {
-    return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
-  }
-
   const query = `
     SELECT 
       articles.*,  
