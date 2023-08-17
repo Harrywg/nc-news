@@ -11,8 +11,26 @@ exports.selectArticlesById = (params) => {
   });
 };
 
-exports.selectArticles = () => {
-  //hard coded for now, intending to change if adding queries
+exports.selectArticles = (params, queries) => {
+  let { sort_by, order, topic } = queries;
+
+  switch (sort_by) {
+    case "article_id":
+    case "title":
+    case "topic":
+    case "author":
+    case "comment_count":
+    case "created_at":
+    case "votes":
+    case "article_img_url":
+      break;
+    default:
+      sort_by = "created_at";
+  }
+
+  if (order !== "ASC" && order !== "DESC") order = undefined;
+  order = order || "DESC";
+
   let query = `
     SELECT 
       articles.article_id, 
@@ -25,10 +43,10 @@ exports.selectArticles = () => {
       COUNT(comments.comment_id) AS comment_count 
     FROM articles 
     LEFT JOIN comments ON comments.article_id = articles.article_id
+    ${topic ? `WHERE topic='${topic}'` : ""}
     GROUP BY articles.article_id
-    ORDER BY created_at DESC;
+    ORDER BY ${sort_by} ${order};
     `;
-
   return db.query(query).then(({ rows }) => {
     return rows;
   });
