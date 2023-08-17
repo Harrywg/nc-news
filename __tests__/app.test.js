@@ -225,6 +225,29 @@ describe("/api/articles", () => {
           );
         });
     });
+    test("returns 201 with updated article when valid id and valid body with negative votes", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({ inc_votes: -5 })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.article.length).toBe(1);
+          const article = body.article[0];
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: 95,
+              article_img_url: expect.any(String),
+            })
+          );
+        });
+    });
+
     test("returns 400 when given invalid body", () => {
       return request(app)
         .patch("/api/articles/3")
