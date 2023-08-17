@@ -50,7 +50,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  describe.only("GET", () => {
+  describe("GET", () => {
     test("200 + returns all articles with correct properties and values, sorted by created_at", () => {
       return request(app)
         .get("/api/articles")
@@ -205,7 +205,7 @@ describe("/api/articles", () => {
   });
 
   describe("GET by id", () => {
-    test("200 + returns correct article object with correct properties", () => {
+    test("200 + returns correct article object with correct properties including comment_count", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -223,8 +223,26 @@ describe("/api/articles", () => {
               created_at: expect.any(String),
               votes: expect.any(Number),
               article_img_url: expect.any(String),
+              comment_count: expect.any(String),
             })
           );
+          expect(+article.comment_count).toBe(11);
+        });
+    });
+    test("400 + returns msg when not passed a number as id", () => {
+      return request(app)
+        .get("/api/articles/banana")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("404 + returns msg id doesn't exist", () => {
+      return request(app)
+        .get("/api/articles/999999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
         });
     });
   });

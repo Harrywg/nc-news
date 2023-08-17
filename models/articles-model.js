@@ -1,12 +1,25 @@
 const db = require("../db/connection");
 
 exports.selectArticlesById = (params) => {
-  let query = `SELECT * FROM articles`;
+  const id = params.article_id;
 
-  query += ` WHERE article_id = ${params.article_id}`;
-  query += ";";
+  if (isNaN(+id)) {
+    return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
+  }
+
+  const query = `
+    SELECT 
+      articles.*,  
+      COUNT (comments.comment_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id
+    WHERE articles.article_id = ${id}
+    GROUP BY articles.article_id;`;
 
   return db.query(query).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ code: 404, msg: "Not Found", custom: true });
+    }
     return rows;
   });
 };
