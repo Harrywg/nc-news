@@ -99,28 +99,12 @@ describe("/api/articles", () => {
           });
         });
     });
-    test("200 + ?sort_by ignores invalid queries", () => {
+    test("400 + ?sort_by returns error when invalid query parameter", () => {
       return request(app)
         .get("/api/articles?sort_by=bananas")
-        .expect(200)
+        .expect(400)
         .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles.length).toBe(13);
-          expect(articles).toBeSortedBy("created_at", { descending: true });
-          articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                article_id: expect.any(Number),
-                title: expect.any(String),
-                topic: expect.any(String),
-                author: expect.any(String),
-                comment_count: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                article_img_url: expect.any(String),
-              })
-            );
-          });
+          expect(body.msg).toBe("Bad Request");
         });
     });
     test("200 + ?order accepts ASC or DESC and returns ordered data", () => {
@@ -147,28 +131,12 @@ describe("/api/articles", () => {
           });
         });
     });
-    test("200 + ?order ignores invalid queries", () => {
+    test("400 + ?order returns err for invalid queries", () => {
       return request(app)
         .get("/api/articles?order=bananas")
-        .expect(200)
+        .expect(400)
         .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles.length).toBe(13);
-          expect(articles).toBeSortedBy("created_at", { descending: true });
-          articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                article_id: expect.any(Number),
-                title: expect.any(String),
-                topic: expect.any(String),
-                author: expect.any(String),
-                comment_count: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                article_img_url: expect.any(String),
-              })
-            );
-          });
+          expect(body.msg).toBe("Bad Request");
         });
     });
     test("200 + ?topic filters by given topic", () => {
@@ -193,13 +161,20 @@ describe("/api/articles", () => {
           );
         });
     });
-    test("200 + ?topic returns no articles if can't find given topic", () => {
+    test("404 + ?topic returns err if can't find given topic", () => {
       return request(app)
         .get("/api/articles?topic=banana")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("200 + ?topic returns no data when no articles match given topic", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
         .expect(200)
         .then(({ body }) => {
-          const articles = body.articles;
-          expect(articles.length).toBe(0);
+          expect(body.articles).toEqual([]);
         });
     });
   });
@@ -246,6 +221,7 @@ describe("/api/articles", () => {
         });
     });
   });
+
   describe("GET article comments by id", () => {
     test("200 + returns array of comments with correct properties and values", () => {
       return request(app)

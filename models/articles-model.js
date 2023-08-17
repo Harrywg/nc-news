@@ -37,14 +37,25 @@ exports.selectArticles = (params, queries) => {
     case "votes":
     case "article_img_url":
       break;
-    default:
+    case undefined:
       sort_by = "created_at";
+      break;
+    default:
+      return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
   }
 
-  if (order !== "ASC" && order !== "DESC") order = undefined;
-  order = order || "DESC";
+  switch (order) {
+    case "ASC":
+    case "DESC":
+      break;
+    case undefined:
+      order = "DESC";
+      break;
+    default:
+      return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
+  }
 
-  let query = `
+  const query = `
     SELECT 
       articles.article_id, 
       articles.title, 
@@ -60,9 +71,31 @@ exports.selectArticles = (params, queries) => {
     GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order};
     `;
-  return db.query(query).then(({ rows }) => {
-    return rows;
-  });
+
+  const checkQuery = `
+    SELECT * 
+    FROM topics 
+    WHERE slug='${topic}'`;
+
+  const checkTopicsQuery = () => {
+    return db.query(checkQuery).then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ code: 404, msg: "Not Found", custom: true });
+      }
+    });
+  };
+
+  const mainQuery = () => {
+    return db.query(query).then(({ rows }) => {
+      return rows;
+    });
+  };
+
+  if (topic) {
+    return checkTopicsQuery().then(() => {
+      return mainQuery();
+    });
+  } else return mainQuery();
 };
 
 exports.updateVotes = (body, params) => {
