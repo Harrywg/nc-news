@@ -203,11 +203,11 @@ describe("/api/articles", () => {
   });
 
   describe("PATCH article votes by article id", () => {
-    test("returns 201 with updated article when valid id and valid body", () => {
+    test("returns 200 with updated article when valid id and valid body", () => {
       return request(app)
         .patch("/api/articles/1")
         .send({ inc_votes: 5 })
-        .expect(201)
+        .expect(200)
         .then(({ body }) => {
           expect(body.article.length).toBe(1);
           const article = body.article[0];
@@ -225,11 +225,11 @@ describe("/api/articles", () => {
           );
         });
     });
-    test("returns 201 with updated article when valid id and valid body with negative votes", () => {
+    test("returns 200 with updated article when valid id and valid body with negative votes", () => {
       return request(app)
         .patch("/api/articles/1")
         .send({ inc_votes: -5 })
-        .expect(201)
+        .expect(200)
         .then(({ body }) => {
           expect(body.article.length).toBe(1);
           const article = body.article[0];
@@ -264,6 +264,15 @@ describe("/api/articles", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("returns 400 given invalid article id", () => {
+      return request(app)
+        .patch("/api/articles/banana")
+        .send({ inc_votes: 3 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
         });
     });
   });
