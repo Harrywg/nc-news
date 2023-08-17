@@ -12,6 +12,7 @@ exports.errorHandler = (err, req, res, next) => {
     case "42703":
       res.status(400).send({ msg: "Bad Request" });
       break;
+    default:
+      res.status(500).send({ msg: "Server Error" });
   }
-  res.status(500).send({ msg: "Server Error" });
 };
