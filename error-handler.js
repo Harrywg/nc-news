@@ -1,6 +1,5 @@
 const express = require("express");
 exports.errorHandler = (err, req, res, next) => {
-  console.log(err);
   //custom errs
   if (err.custom) {
     res.status(err.code).send({ msg: err.msg });

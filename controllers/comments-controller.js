@@ -21,7 +21,6 @@ exports.postCommentByArticleId = (req, res, next) => {
 };
 
 exports.deleteCommentByCommentId = (req, res, next) => {
-  console.log("in controller");
   removeCommentByCommentId(req.params)
     .then(() => {
       res.status(204).send();

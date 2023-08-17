@@ -270,13 +270,19 @@ describe("/api/articles", () => {
 });
 
 describe("/api/comments", () => {
-  describe.only("DELETE comment by comment id", () => {
-    test.only("204 + returns no body when sent valid id", () => {
+  describe("DELETE comment by comment id", () => {
+    test("204 + returns no body when sent valid id, comment is deleted", () => {
       return request(app)
         .delete("/api/comments/1")
         .expect(204)
         .then(({ body }) => {
           expect(body.msg).toBe(undefined);
+          return request(app)
+            .get("/api/articles/9/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comments.length).toBe(1);
+            });
         });
     });
     test("404 + returns msg when sent id that doesn't exist", () => {
