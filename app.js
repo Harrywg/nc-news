@@ -33,6 +33,11 @@ app.post(
 );
 
 app.get("/api/users", usersController.getUsers);
+
+app.delete(
+  "/api/comments/:comment_id",
+  commentsController.deleteCommentByCommentId
+);
 app.use(errorHandler);
 
 module.exports = app;

@@ -278,6 +278,41 @@ describe("/api/articles", () => {
   });
 });
 
+describe("/api/comments", () => {
+  describe("DELETE comment by comment id", () => {
+    test("204 + returns no body when sent valid id, comment is deleted", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body.msg).toBe(undefined);
+          return request(app)
+            .get("/api/articles/9/comments")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comments.length).toBe(1);
+            });
+        });
+    });
+    test("404 + returns msg when sent id that doesn't exist", () => {
+      return request(app)
+        .delete("/api/comments/9999999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("400 + returns msg when sent invalid path", () => {
+      return request(app)
+        .delete("/api/comments/apple")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+
 describe("/api/users", () => {
   describe("GET users", () => {
     test("200 + returns all users", () => {
