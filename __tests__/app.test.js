@@ -268,3 +268,32 @@ describe("/api/articles", () => {
     });
   });
 });
+
+describe("/api/comments", () => {
+  describe.only("DELETE comment by comment id", () => {
+    test.only("204 + returns no body when sent valid id", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body.msg).toBe(undefined);
+        });
+    });
+    test("404 + returns msg when sent id that doesn't exist", () => {
+      return request(app)
+        .delete("/api/comments/9999999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("400 + returns msg when sent invalid path", () => {
+      return request(app)
+        .delete("/api/comments/apple")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});

@@ -31,6 +31,10 @@ app.post(
   commentsController.postCommentByArticleId
 );
 
+app.delete(
+  "/api/comments/:comment_id",
+  commentsController.deleteCommentByCommentId
+);
 app.use(errorHandler);
 
 module.exports = app;

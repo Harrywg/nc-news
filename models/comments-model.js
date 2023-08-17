@@ -50,3 +50,15 @@ exports.insertCommentsByArticleId = (reqBody, params) => {
     });
   });
 };
+
+exports.removeCommentByCommentId = (params) => {
+  const id = params.comment_id;
+  const checkQuery = `SELECT * FROM comments WHERE comment_id = $1;`;
+  const deleteQuery = `DELETE FROM comments WHERE comment_id = $1;`;
+  return db.query(checkQuery, [id]).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ msg: "Not Found", code: 404, custom: true });
+    }
+    return db.query(deleteQuery, [id]);
+  });
+};
