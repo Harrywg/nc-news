@@ -7,6 +7,9 @@ const {
 exports.getArticles = (req, res, next) => {
   selectArticles(req.params, req.query)
     .then((articles) => {
+      if (articles.length === 0) {
+        res.status(204).send();
+      }
       res.status(200).send({ articles });
     })
     .catch((err) => next(err));

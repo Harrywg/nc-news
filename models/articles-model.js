@@ -42,7 +42,7 @@ exports.selectArticles = (params, queries) => {
       return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
   }
 
-  let query = `
+  const query = `
     SELECT 
       articles.article_id, 
       articles.title, 
@@ -58,12 +58,31 @@ exports.selectArticles = (params, queries) => {
     GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order};
     `;
-  return db.query(query).then(({ rows }) => {
-    if (topic && rows.length === 0) {
-      return Promise.reject({ code: 404, msg: "Not Found", custom: true });
-    }
-    return rows;
-  });
+
+  const checkQuery = `
+    SELECT * 
+    FROM topics 
+    WHERE slug='${topic}'`;
+
+  const checkTopicsQuery = () => {
+    return db.query(checkQuery).then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ code: 404, msg: "Not Found", custom: true });
+      }
+    });
+  };
+
+  const mainQuery = () => {
+    return db.query(query).then(({ rows }) => {
+      return rows;
+    });
+  };
+
+  if (topic) {
+    return checkTopicsQuery().then(() => {
+      return mainQuery();
+    });
+  } else return mainQuery();
 };
 
 exports.updateVotes = (body, params) => {

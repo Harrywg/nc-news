@@ -169,6 +169,14 @@ describe("/api/articles", () => {
           expect(body.msg).toBe("Not Found");
         });
     });
+    test("204 + ?topic returns no data when no articles match given topic", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({});
+        });
+    });
   });
 
   describe("GET by id", () => {
