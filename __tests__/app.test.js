@@ -169,12 +169,12 @@ describe("/api/articles", () => {
           expect(body.msg).toBe("Not Found");
         });
     });
-    test("204 + ?topic returns no data when no articles match given topic", () => {
+    test("200 + ?topic returns no data when no articles match given topic", () => {
       return request(app)
         .get("/api/articles?topic=paper")
-        .expect(204)
+        .expect(200)
         .then(({ body }) => {
-          expect(body).toEqual({});
+          expect(body.articles).toEqual([]);
         });
     });
   });
@@ -203,6 +203,7 @@ describe("/api/articles", () => {
         });
     });
   });
+
   describe("GET article comments by id", () => {
     test("200 + returns array of comments with correct properties and values", () => {
       return request(app)
