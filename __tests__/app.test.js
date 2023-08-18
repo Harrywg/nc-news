@@ -179,7 +179,7 @@ describe("/api/articles", () => {
     });
   });
 
-  describe.only("POST", () => {
+  describe("POST", () => {
     test("201 + returns posted article", () => {
       return request(app)
         .post("/api/articles")
