@@ -6,4 +6,6 @@ commentsRouter.delete(
   commentsController.deleteCommentByCommentId
 );
 
+commentsRouter.patch("/:comment_id", commentsController.patchVotes);
+
 module.exports = commentsRouter;

@@ -432,6 +432,75 @@ describe("/api/comments", () => {
         });
     });
   });
+  describe("PATCH comment votes by comment id", () => {
+    test("200 + updates comment votes", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: 5 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment.length).toBe(1);
+          const comment = body.comment[0];
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: expect.any(String),
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              votes: 21,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("200 + updated comments votes when passed negative votes", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ inc_votes: -5 })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment.length).toBe(1);
+          const comment = body.comment[0];
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: expect.any(String),
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              votes: 11,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("400 + msg when invalid body", () => {
+      return request(app)
+        .patch("/api/comments/1")
+        .send({ invalid_body: true })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("400 + msg when id not a number", () => {
+      return request(app)
+        .patch("/api/comments/banana")
+        .send({ inc_votes: 5 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("404 + msg when passed id that does not exist", () => {
+      return request(app)
+        .patch("/api/comments/999999")
+        .send({ inc_votes: 5 })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {

@@ -97,7 +97,7 @@ exports.selectArticles = (params, queries) => {
 exports.updateVotes = (body, params) => {
   const id = params.article_id;
   const votesToAdd = body.inc_votes;
-  let query = `
+  const query = `
   UPDATE articles 
   SET votes = votes + $2
   WHERE article_id = $1;

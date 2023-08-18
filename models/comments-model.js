@@ -62,3 +62,32 @@ exports.removeCommentByCommentId = (params) => {
     return db.query(deleteQuery, [id]);
   });
 };
+
+exports.updateVotes = (body, params) => {
+  const id = params.comment_id;
+  const votesToAdd = body.inc_votes;
+
+  let query = `
+  UPDATE comments
+  SET votes = votes + $2
+  WHERE comment_id = $1;
+  `;
+
+  const getComment = () => {
+    return db.query(`SELECT * FROM comments WHERE comment_id = $1`, [id]);
+  };
+
+  return getComment()
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ code: 404, msg: "Not Found", custom: true });
+      }
+      return db.query(query, [id, votesToAdd]);
+    })
+    .then(() => {
+      return getComment();
+    })
+    .then(({ rows }) => {
+      return rows;
+    });
+};
