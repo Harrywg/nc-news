@@ -22,8 +22,7 @@ exports.selectArticlesById = (params) => {
 };
 
 exports.selectArticles = (params, queries) => {
-  let { sort_by, order, topic, limit } = queries;
-
+  let { sort_by, order, topic, limit, p } = queries;
   switch (sort_by) {
     case "article_id":
     case "title":
@@ -53,9 +52,15 @@ exports.selectArticles = (params, queries) => {
   }
 
   if (limit === undefined) limit = 10;
-  if (isNaN(+limit)) {
-    return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
+  const articleLimit = +limit;
+
+  let noPageDefined = false;
+  if (p === undefined) {
+    noPageDefined = true;
+    p = 1;
   }
+
+  const pageIndex = p - 1;
 
   const query = `
     SELECT 
@@ -72,33 +77,57 @@ exports.selectArticles = (params, queries) => {
     ${topic ? `WHERE topic='${topic}'` : ""}
     GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order}
-    ${limit ? `LIMIT ${limit}` : ""};
+    LIMIT ${articleLimit} 
+    OFFSET ${pageIndex * articleLimit};
     `;
 
   const checkQuery = `
     SELECT * 
     FROM topics 
-    WHERE slug='${topic}'`;
+    WHERE slug = $1`;
 
   const checkTopicsQuery = () => {
-    return db.query(checkQuery).then(({ rows }) => {
+    return db.query(checkQuery, [topic]).then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ code: 404, msg: "Not Found", custom: true });
       }
     });
   };
 
-  const mainQuery = () => {
-    return db.query(query).then(({ rows }) => {
-      return rows;
-    });
+  const getAllRows = () => {
+    return db.query(`SELECT COUNT(*) FROM articles;`);
   };
 
-  if (topic) {
-    return checkTopicsQuery().then(() => {
+  let totalRows = 0;
+
+  const mainQuery = () => {
+    return db.query(query);
+  };
+
+  // if (topic) {
+  //   return checkTopicsQuery().then(() => {
+  //     return mainQuery();
+  //   });
+  // } else return mainQuery();
+
+  return getAllRows()
+    .then(({ rows }) => {
+      totalRows = rows[0];
+      if (topic) {
+        return checkTopicsQuery();
+      } else return Promise.resolve();
+    })
+    .then(() => {
       return mainQuery();
+    })
+    .then((res) => {
+      const rows = res.rows;
+      if (rows.length === 0 && !noPageDefined) {
+        return Promise.reject({ code: 404, msg: "Not Found", custom: true });
+      }
+      return { ...res };
+      //need to return a new response object here but that would break many tests!
     });
-  } else return mainQuery();
 };
 
 exports.updateVotes = (body, params) => {

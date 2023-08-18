@@ -201,6 +201,43 @@ describe("/api/articles", () => {
           expect(body.msg).toBe("Bad Request");
         });
     });
+    test("200 + ?p returns page of articles of count limit", () => {
+      return request(app)
+        .get("/api/articles?p=2")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.articles;
+          expect(articles.length).toBe(3);
+        });
+    });
+    test("200 + ?p and ?limit work together", () => {
+      return request(app)
+        .get("/api/articles?limit=2&p=2")
+        .expect(200)
+        .then(({ body }) => {
+          const articles = body.articles;
+          expect(articles.length).toBe(2);
+          expect(articles[0]).toEqual({
+            article_id: 2,
+            title: "Sony Vaio; or, The Laptop",
+            topic: "mitch",
+            author: "icellusedkars",
+            created_at: "2020-10-16T05:03:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: "0",
+          });
+        });
+    });
+    test("404 + empty data when page doesn't exist", () => {
+      return request(app)
+        .get("/api/articles?p=99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
   });
 
   describe("POST", () => {
