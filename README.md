@@ -18,23 +18,21 @@ Building this app I applied real-world development practices as best as I could.
 
 ## Instructions
 
-In order to set-up this project for test and development, first clone the repo in your terminal.
+Follow these instructions to set up the project for test and development.
+
+1. First clone the repo in your terminal
 
 ```
 git clone https://github.com/Harrywg/nc-news.git
 ```
 
-Ensure that you install the required dependencies.
+2. Ensure that you install the required dependencies
 
 ```
 npm i
 ```
 
-Setup and seed the local database if you want to send local requests.
-
-```
-npm run
-```
+3. Create .env files in root directory
 
 .env.test
 
@@ -47,3 +45,23 @@ PGDATABASE=nc_news_test
 ```sql
 PGDATABASE=nc_news
 ```
+
+4. Setup and seed the local database if you want to send local requests
+
+```
+npm run setup-dbs
+
+npm run seed
+```
+
+5. Test database using jest.
+
+```
+npm t
+```
+
+## Version requirements
+
+Node v20.3.1
+
+psql v14.9
