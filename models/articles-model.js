@@ -22,7 +22,7 @@ exports.selectArticlesById = (params) => {
 };
 
 exports.selectArticles = (params, queries) => {
-  let { sort_by, order, topic } = queries;
+  let { sort_by, order, topic, limit } = queries;
 
   switch (sort_by) {
     case "article_id":
@@ -52,6 +52,11 @@ exports.selectArticles = (params, queries) => {
       return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
   }
 
+  if (limit === undefined) limit = 10;
+  if (isNaN(+limit)) {
+    return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
+  }
+
   const query = `
     SELECT 
       articles.article_id, 
@@ -66,7 +71,8 @@ exports.selectArticles = (params, queries) => {
     LEFT JOIN comments ON comments.article_id = articles.article_id
     ${topic ? `WHERE topic='${topic}'` : ""}
     GROUP BY articles.article_id
-    ORDER BY ${sort_by} ${order};
+    ORDER BY ${sort_by} ${order}
+    ${limit ? `LIMIT ${limit}` : ""};
     `;
 
   const checkQuery = `
