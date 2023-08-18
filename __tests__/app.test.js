@@ -455,7 +455,7 @@ describe("/api/users", () => {
         });
     });
   });
-  describe.only("GET users by username", () => {
+  describe("GET users by username", () => {
     test("200 + returns all users with username", () => {
       return request(app)
         .get("/api/users/lurker")
