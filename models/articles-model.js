@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("../db/connection");
 
 exports.selectArticlesById = (params) => {
@@ -119,5 +120,49 @@ exports.updateVotes = (body, params) => {
     })
     .then(({ rows }) => {
       return rows;
+    });
+};
+
+exports.addArticle = (reqBody) => {
+  let { author, title, body, topic, article_img_url } = reqBody;
+
+  const query = `
+  INSERT INTO articles (
+    author,
+    title,
+    body,
+    topic,
+    article_img_url
+  ) VALUES %L
+  RETURNING article_id;`;
+
+  if (!article_img_url) {
+    article_img_url =
+      "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png";
+  }
+
+  const values = [[author, title, body, topic, article_img_url]];
+
+  const formattedQuery = format(query, values);
+
+  const returnQuery = `
+  SELECT 
+    articles.*, 
+    COUNT(comments.comment_id) AS comment_count 
+  FROM articles 
+  LEFT JOIN comments ON comments.article_id = articles.article_id
+  WHERE articles.article_id = $1
+  GROUP BY articles.article_id
+  ORDER BY created_at DESC;`;
+
+  return db
+    .query(formattedQuery)
+    .then(({ rows }) => {
+      const generatedId = rows[0].article_id;
+      return db.query(returnQuery, [generatedId]);
+    })
+    .then(({ rows }) => {
+      const article = rows[0];
+      return article;
     });
 };

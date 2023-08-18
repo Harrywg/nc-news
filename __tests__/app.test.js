@@ -179,6 +179,47 @@ describe("/api/articles", () => {
     });
   });
 
+  describe.only("POST", () => {
+    test("201 + returns posted article", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({
+          author: "lurker",
+          title: "I can't stop lurking",
+          body: "That's about it",
+          topic: "cats",
+        })
+        .expect(201)
+        .then(({ body }) => {
+          const article = body.article;
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 14,
+              title: "I can't stop lurking",
+              topic: "cats",
+              author: "lurker",
+              body: "That's about it",
+              created_at: expect.any(String),
+              votes: 0,
+              article_img_url: expect.any(String),
+              comment_count: "0",
+            })
+          );
+        });
+    });
+    test("400 + returns msg when invalid body", () => {
+      return request(app)
+        .post("/api/articles")
+        .send({
+          invalid_body: true,
+        })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+
   describe("GET by id", () => {
     test("200 + returns correct article object with correct properties including comment_count", () => {
       return request(app)
