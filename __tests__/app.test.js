@@ -455,4 +455,30 @@ describe("/api/users", () => {
         });
     });
   });
+  describe.only("GET users by username", () => {
+    test("200 + returns all users with username", () => {
+      return request(app)
+        .get("/api/users/lurker")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.users.length).toBe(1);
+          const user = body.users[0];
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: "lurker",
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+    });
+    test("404 + returns msg when passed username that doesn't exist", () => {
+      return request(app)
+        .get("/api/users/notarealuser")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+  });
 });
