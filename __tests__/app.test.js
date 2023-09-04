@@ -57,7 +57,7 @@ describe("/api/articles", () => {
         .expect(200)
         .then(({ body }) => {
           const articles = body.articles;
-          expect(articles.length).toBe(13);
+          expect(articles.length).toBe(10);
           expect(articles).toBeSortedBy("created_at", { descending: true });
           articles.forEach((article) => {
             expect(article).toEqual(
@@ -81,7 +81,7 @@ describe("/api/articles", () => {
         .expect(200)
         .then(({ body }) => {
           const articles = body.articles;
-          expect(articles.length).toBe(13);
+          expect(articles.length).toBe(10);
           expect(articles).toBeSortedBy("title", { descending: true });
           articles.forEach((article) => {
             expect(article).toEqual(
@@ -113,7 +113,7 @@ describe("/api/articles", () => {
         .expect(200)
         .then(({ body }) => {
           const articles = body.articles;
-          expect(articles.length).toBe(13);
+          expect(articles.length).toBe(10);
           expect(articles).toBeSortedBy("created_at");
           articles.forEach((article) => {
             expect(article).toEqual(
@@ -175,6 +175,30 @@ describe("/api/articles", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.articles).toEqual([]);
+        });
+    });
+    test("200 + ?limit limits the number of responses by given integer", () => {
+      return request(app)
+        .get("/api/articles?limit=12")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(12);
+        });
+    });
+    test("200 + ?limit defaults to 10", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(10);
+        });
+    });
+    test("400 + ?limit returns err when passed NaN", () => {
+      return request(app)
+        .get("/api/articles?limit=banana")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
         });
     });
   });
