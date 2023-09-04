@@ -4,26 +4,107 @@
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
-    "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [{ "slug": "topic-title", "description": "topic-description" }]
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "Serves an array of all articles",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
+          "title": "Article title",
+          "topic": "Article topic",
+          "author": "User",
           "body": "Text from the article..",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
-          "comment_count": 6
+          "article_img_url": "https://www.example-img-url.com/example-img.jpg",
+          "comment_count": 10
         }
       ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "Serves an article by id",
+    "exampleResponse": {
+      "article": {
+        "title": "Article title",
+        "topic": "Article topic",
+        "author": "User",
+        "body": "Text from the article..",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 0,
+        "article_img_url": "https://www.example-img-url.com/example-img.jpg",
+        "comment_count": 10
+      }
+    }
+  },
+  "POST /api/articles": {
+    "description": "input an article",
+    "exampleBody": {
+      "title": "Any title",
+      "topic": "Any valid topic",
+      "author": "Any valid user",
+      "body": "Any body"
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "increase votes by of article by article id",
+    "exampleBody": {
+      "inc_votes": 10
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves all comments from article",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 1,
+          "votes": 5,
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "author": "comment username",
+          "body": "the body of the comment",
+          "article_id": 1
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "input a comment by article id",
+    "exampleBody": {
+      "username": "any valid username",
+      "body": "any body"
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "removes comment by comment id"
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "increase votes by of comment by comment id",
+    "exampleBody": {
+      "inc_votes": 10
+    }
+  },
+  "GET /api/users": {
+    "description": "serves array of all users",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "users-username",
+          "name": "users-name",
+          "avatar_url": "https://www.example-img-url.com/example-img.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves a user by username",
+    "exampleResponse": {
+      "username": "users-username",
+      "name": "users-name",
+      "avatar_url": "https://www.example-img-url.com/example-img.jpg"
     }
   }
 }
