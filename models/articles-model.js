@@ -22,7 +22,7 @@ exports.selectArticlesById = (params) => {
 };
 
 exports.selectArticles = (params, queries) => {
-  let { sort_by, order, topic, limit } = queries;
+  let { sort_by, order, topic, limit, p } = queries;
 
   switch (sort_by) {
     case "article_id":
@@ -57,6 +57,16 @@ exports.selectArticles = (params, queries) => {
     return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
   }
 
+  const articleLimit = +limit;
+
+  let noPageDefined = false;
+  if (p === undefined) {
+    noPageDefined = true;
+    p = 1;
+  }
+
+  const pageIndex = p - 1;
+
   const query = `
     SELECT 
       articles.article_id, 
@@ -72,7 +82,8 @@ exports.selectArticles = (params, queries) => {
     ${topic ? `WHERE topic='${topic}'` : ""}
     GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order}
-    ${limit ? `LIMIT ${limit}` : ""};
+    ${limit ? `LIMIT ${limit}` : ""}
+    OFFSET ${pageIndex * articleLimit};
     `;
 
   const checkQuery = `
