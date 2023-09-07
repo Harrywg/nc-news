@@ -47,8 +47,12 @@
       "title": "Any title",
       "topic": "Any valid topic",
       "author": "Any valid user",
+      "article_img_url": "Any url",
       "body": "Any body"
     }
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "remove an article by id"
   },
   "PATCH /api/articles/:article_id": {
     "description": "increase votes by of article by article id",
