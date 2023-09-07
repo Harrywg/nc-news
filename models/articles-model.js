@@ -187,3 +187,31 @@ exports.addArticle = (reqBody) => {
       return article;
     });
 };
+
+exports.removeArticleById = (params) => {
+  const id = params.article_id;
+
+  const commentsCheckQuery = `SELECT * FROM comments WHERE comments.article_id = $1;`;
+  const commentsDeleteQuery = `DELETE FROM comments WHERE comments.article_id = $1;`;
+
+  const checkQuery = `SELECT * FROM articles WHERE article_id = $1;`;
+  const deleteQuery = `DELETE FROM articles WHERE article_id = $1;`;
+
+  return db
+    .query(commentsCheckQuery, [id])
+    .then(({ rows }) => {
+      console.log(rows);
+      if (rows.length !== 0) {
+        return db.query(commentsDeleteQuery, [id]);
+      }
+    })
+    .then(() => {
+      return db.query(checkQuery, [id]);
+    })
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ msg: "Not Found", code: 404, custom: true });
+      }
+      return db.query(deleteQuery, [id]);
+    });
+};
