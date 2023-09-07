@@ -1,6 +1,6 @@
 # NC News API
 
-Hosted link : https://nc-news-server-duxo.onrender.com/
+Hosted link : https://nc-news-server-duxo.onrender.com/api
 
 ## About
 
