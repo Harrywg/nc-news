@@ -3,6 +3,9 @@ const db = require("../db/connection");
 
 exports.selectArticlesById = (params) => {
   const id = params.article_id;
+  if (isNaN(id)) {
+    return Promise.reject({ code: 400, msg: "Bad Request", custom: true });
+  }
 
   const query = `
     SELECT 
@@ -14,6 +17,7 @@ exports.selectArticlesById = (params) => {
     GROUP BY articles.article_id;`;
 
   return db.query(query).then(({ rows }) => {
+    console.log("then");
     if (rows.length === 0) {
       return Promise.reject({ code: 404, msg: "Not Found", custom: true });
     }
