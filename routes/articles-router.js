@@ -19,4 +19,6 @@ articlesRouter.post(
   commentsController.postCommentByArticleId
 );
 
+articlesRouter.delete("/:article_id", articlesController.deleteArticleById);
+
 module.exports = articlesRouter;
