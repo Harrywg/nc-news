@@ -348,7 +348,16 @@ describe("/api/articles", () => {
         .send(comment)
         .expect(201)
         .then(({ body }) => {
-          expect(body.comment).toEqual(comment);
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
         });
     });
     test("404 + return msg when passed article id that doesn't exist", () => {

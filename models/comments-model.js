@@ -35,7 +35,8 @@ exports.insertCommentsByArticleId = (reqBody, params) => {
 
   let query = `
   INSERT INTO comments (author, body, article_id)
-  VALUES %L;
+  VALUES %L
+  RETURNING *;
   `;
 
   const formattedQuery = format(query, values);
@@ -45,8 +46,8 @@ exports.insertCommentsByArticleId = (reqBody, params) => {
     if (rows.length === 0) {
       return Promise.reject({ msg: "Not Found", code: 404, custom: true });
     }
-    return db.query(formattedQuery).then(() => {
-      return reqBody;
+    return db.query(formattedQuery).then(({ rows }) => {
+      return rows[0];
     });
   });
 };
